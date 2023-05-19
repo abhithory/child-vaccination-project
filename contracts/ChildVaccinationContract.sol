@@ -2,15 +2,15 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-contract ChildContract {
-    bytes32 private constant ON_BIRTH = keccak256(abi.encodePacked("birth"));
-    bytes32 private constant ON_2M_15D = keccak256(abi.encodePacked("2m15d"));
-    bytes32 private constant ON_3M_15D = keccak256(abi.encodePacked("3m15d"));
-    bytes32 private constant ON_9M = keccak256(abi.encodePacked("9m"));
-    bytes32 private constant ON_16M = keccak256(abi.encodePacked("16m"));
-    bytes32 private constant ON_5Y = keccak256(abi.encodePacked("5y"));
-    bytes32 private constant ON_10Y = keccak256(abi.encodePacked("10y"));
-    bytes32 private constant ON_16Y = keccak256(abi.encodePacked("16y"));
+contract ChildVaccinationContract {
+    bytes32 public constant ON_BIRTH = keccak256(abi.encodePacked("birth"));
+    bytes32 public constant ON_2M_15D = keccak256(abi.encodePacked("2m15d"));
+    bytes32 public constant ON_3M_15D = keccak256(abi.encodePacked("3m15d"));
+    bytes32 public constant ON_9M = keccak256(abi.encodePacked("9m"));
+    bytes32 public constant ON_16M = keccak256(abi.encodePacked("16m"));
+    bytes32 public constant ON_5Y = keccak256(abi.encodePacked("5y"));
+    bytes32 public constant ON_10Y = keccak256(abi.encodePacked("10y"));
+    bytes32 public constant ON_16Y = keccak256(abi.encodePacked("16y"));
 
     struct OneVaccination {
         string vaccName;
@@ -18,9 +18,10 @@ contract ChildContract {
         uint256 vaccDate;
     }
 
-    mapping(string => mapping(string => OneVaccination)) private childDetails;
+    mapping(string => mapping(string => OneVaccination)) childDetails;
 
     address private childAddr;
+    address private vactinationCenterAddr;
     address private registrarAddr;
 
     constructor(address _childAddr) {
@@ -37,7 +38,12 @@ contract ChildContract {
         _;
     }
 
-    modifier childOrRegistrarBoth() {
+    modifier onlyVactinationCenter() {
+        require(msg.sender == vactinationCenterAddr);
+        _;
+    }
+
+    modifier childOrVaccnationCenterBoth() {
         require(msg.sender == childAddr || msg.sender == registrarAddr);
         _;
     }
@@ -60,14 +66,14 @@ contract ChildContract {
     function getChildDetails(
         string memory childAgeType,
         string memory vaccineName
-    ) public view childOrRegistrarBoth returns (OneVaccination memory) {
+    ) public view childOrVaccnationCenterBoth returns (OneVaccination memory) {
         return childDetails[childAgeType][vaccineName];
     }
 
     function updateVaccinationStatusBirth(
         string memory childAgeType,
         string memory vaccineName
-    ) public onlyRegistrarUser AgeTypeShouldBeInFormat(childAgeType) {
+    ) public onlyVactinationCenter AgeTypeShouldBeInFormat(childAgeType) {
         childDetails[childAgeType][vaccineName] = OneVaccination(
             vaccineName,
             true,
