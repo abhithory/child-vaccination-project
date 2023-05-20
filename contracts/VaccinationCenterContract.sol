@@ -4,7 +4,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "./ChildVaccinationContract.sol";
 
-contract RegistrarContract {
+contract VaccinationCenterContract {
     struct Child {
         // string name;
         address childContractAddr;
@@ -38,7 +38,6 @@ contract RegistrarContract {
     function registerChild(address childAddr, address vacctinationCenterAddr)
         public
         onlyRegistredVaccinationCenter(vacctinationCenterAddr)
-        onlyAdmin
     {
         ChildVaccinationContract _child = ChildVaccinationContract(childAddr);
         childDetailsOf[childAddr] = Child(address(_child));

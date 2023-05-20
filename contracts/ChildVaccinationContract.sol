@@ -12,20 +12,23 @@ contract ChildVaccinationContract {
     bytes32 public constant ON_10Y = keccak256(abi.encodePacked("10y"));
     bytes32 public constant ON_16Y = keccak256(abi.encodePacked("16y"));
 
-    struct OneVaccination {
+    struct Vaccination {
         string vaccName;
         bool vaccStatus;
         uint256 vaccDate;
+        uint256 vaccExpDate;
     }
 
-    mapping(string => mapping(string => OneVaccination)) childDetails;
+    mapping(string => mapping(string => Vaccination)) childDetails; // vaccineCategory=>vaccineDate
 
     address private childAddr;
     address private vactinationCenterAddr;
     address private registrarAddr;
 
+    // constructor(address _childAddr, address _vacciAddr) {
     constructor(address _childAddr) {
         childAddr = _childAddr;
+        vactinationCenterAddr = tx.origin;
         registrarAddr = msg.sender;
     }
 
@@ -44,7 +47,7 @@ contract ChildVaccinationContract {
     }
 
     modifier childOrVaccnationCenterBoth() {
-        require(msg.sender == childAddr || msg.sender == registrarAddr);
+        require(msg.sender == childAddr || msg.sender == vactinationCenterAddr);
         _;
     }
 
@@ -66,18 +69,20 @@ contract ChildVaccinationContract {
     function getChildDetails(
         string memory childAgeType,
         string memory vaccineName
-    ) public view childOrVaccnationCenterBoth returns (OneVaccination memory) {
+    ) public view childOrVaccnationCenterBoth returns (Vaccination memory) {
         return childDetails[childAgeType][vaccineName];
     }
 
     function updateVaccinationStatusBirth(
         string memory childAgeType,
-        string memory vaccineName
+        string memory vaccineName,
+        uint256 expDate
     ) public onlyVactinationCenter AgeTypeShouldBeInFormat(childAgeType) {
-        childDetails[childAgeType][vaccineName] = OneVaccination(
+        childDetails[childAgeType][vaccineName] = Vaccination(
             vaccineName,
             true,
-            block.timestamp
+            block.timestamp,
+            expDate
         );
     }
 }
