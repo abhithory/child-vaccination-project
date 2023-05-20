@@ -58,10 +58,12 @@ describe("VaccinationCenterContract", function () {
       expect(await vaccinationCenterContract.registredVaccinationCenter(vaccinationCenterAddr.address)).to.equal(false);
       const txRegisterVaccCenter = await vaccinationCenterContract.registerVaccinationCenter(vaccinationCenterAddr.address);
       gasDetails.registerVaccinationCenter = Number((await txRegisterVaccCenter.wait()).gasUsed)
+      console.table({"Vaccination Center Address: ":vaccinationCenterAddr.address});
+
       expect(await vaccinationCenterContract.registredVaccinationCenter(vaccinationCenterAddr.address)).to.equal(true);
     });
 
-    it("Should deploy Child with correct details", async function () {
+    it("Should register Child with correct details", async function () {
       const { vaccinationCenterContract, owner, vaccinationCenterAddr, childAddr } = await loadFixture(deployVaccinationCenterContract);
 
       await vaccinationCenterContract.registerVaccinationCenter(vaccinationCenterAddr.address);
@@ -75,6 +77,9 @@ describe("VaccinationCenterContract", function () {
       gasDetails.registerChild = Number((await txRegisterChild.wait()).gasUsed)
          
       const _childDetialsUpdated = await vaccinationCenterContract.childDetailsOf(childAddr.address);
+
+      console.table({"Child Vaccination Contract Address: ":_childDetialsUpdated.childContractAddr});
+
 
       expect(_childDetialsUpdated.registredStatus).to.equal(true);
       expect(_childDetialsUpdated.childContractAddr).to.not.equal("0x0000000000000000000000000000000000000000");
