@@ -2,6 +2,9 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
+import "hardhat/console.sol";
+
+
 contract ChildVaccinationContract {
     bytes32 public constant ON_BIRTH = keccak256(abi.encodePacked("birth"));
     bytes32 public constant ON_2M_15D = keccak256(abi.encodePacked("2m15d"));
@@ -19,11 +22,11 @@ contract ChildVaccinationContract {
         uint256 vaccExpDate;
     }
 
-    mapping(string => mapping(string => Vaccination)) childDetails; // vaccineCategory=>vaccineDate
+    mapping(string => mapping(string => Vaccination)) private childDetails; // vaccineCategory=>vaccineDate
 
-    address private childAddr;
-    address private vactinationCenterAddr;
-    address private registrarAddr;
+    address public childAddr;
+    address public vactinationCenterAddr;
+    address public registrarAddr;
 
     // constructor(address _childAddr, address _vacciAddr) {
     constructor(address _childAddr) {
@@ -47,7 +50,7 @@ contract ChildVaccinationContract {
     }
 
     modifier childOrVaccnationCenterBoth() {
-        require(msg.sender == childAddr || msg.sender == vactinationCenterAddr);
+        require(msg.sender == childAddr || msg.sender == vactinationCenterAddr, "only child or vaccination center can call this");
         _;
     }
 
@@ -61,7 +64,7 @@ contract ChildVaccinationContract {
                 ON_16M == childAgeTypeBytes ||
                 ON_5Y == childAgeTypeBytes ||
                 ON_10Y == childAgeTypeBytes ||
-                ON_16Y == childAgeTypeBytes
+                ON_16Y == childAgeTypeBytes,"Age type is not correct"
         );
         _;
     }
@@ -69,7 +72,7 @@ contract ChildVaccinationContract {
     function getChildDetails(
         string memory childAgeType,
         string memory vaccineName
-    ) public view childOrVaccnationCenterBoth returns (Vaccination memory) {
+    ) public view childOrVaccnationCenterBoth AgeTypeShouldBeInFormat(childAgeType) returns (Vaccination memory) {
         return childDetails[childAgeType][vaccineName];
     }
 
@@ -77,7 +80,7 @@ contract ChildVaccinationContract {
         string memory childAgeType,
         string memory vaccineName,
         uint256 expDate
-    ) public onlyVactinationCenter AgeTypeShouldBeInFormat(childAgeType) {
+    ) public  {
         childDetails[childAgeType][vaccineName] = Vaccination(
             vaccineName,
             true,
