@@ -4,7 +4,7 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "./ChildVaccinationContract.sol";
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract VaccinationCenterContract {
      struct Child {

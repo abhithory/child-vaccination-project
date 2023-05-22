@@ -2,7 +2,7 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 
 contract ChildVaccinationContract {
@@ -80,7 +80,7 @@ contract ChildVaccinationContract {
         string memory childAgeType,
         string memory vaccineName,
         uint256 expDate
-    ) public  {
+    ) public  onlyVactinationCenter  {
         childDetails[childAgeType][vaccineName] = Vaccination(
             vaccineName,
             true,
