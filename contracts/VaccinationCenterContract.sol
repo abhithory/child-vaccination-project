@@ -12,14 +12,13 @@ contract VaccinationCenterContract {
           bool registredStatus;
           address childContractAddr;
      }
-
      mapping(address => Child) public childDetailsOf;
-
      mapping(address => bool) public registredVaccinationCenter;
 
-     // event childRegistered(address indexed childAddr, address indexed childContractAddr);
+
 
      address public admin;
+     // event childRegistered(address indexed childAddr, address indexed childContractAddr);
 
      constructor() {
           admin = msg.sender;
@@ -50,4 +49,6 @@ contract VaccinationCenterContract {
      ) public onlyAdmin {
           registredVaccinationCenter[vacctinationCenterAddr] = true;
      }
+
+     
 }

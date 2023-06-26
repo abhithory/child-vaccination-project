@@ -21,7 +21,6 @@ contract ChildVaccinationContract {
         uint256 vaccDate;
         uint256 vaccExpDate;
     }
-
     mapping(string => mapping(string => Vaccination)) private childDetails; // vaccineCategory=>vaccineDate
 
     address public childAddr;
